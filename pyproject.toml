@@ -1,0 +1,21 @@
+[tool.pdm]
+
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+    {name = "Simon Austen", email = "hello@simonausten.me"},
+]
+dependencies = [
+    "termcolor>=2.3.0",
+    "langchain>=0.0.150",
+    "openai>=0.27.4",
+    "gradio>=3.27.0",
+    "setuptools>=67.7.2",
+    "pip>=23.1.2",
+    "toml>=0.10.2",
+    "black>=23.3.0",
+]
+requires-python = ">=3.11"
+license = {text = "MIT"}
