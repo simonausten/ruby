@@ -162,4 +162,4 @@ cython_debug/
 therapist_turbo.md
 therapist.md
 
-.streamlit/
+.streamlit/secrets.toml
