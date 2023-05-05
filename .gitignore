@@ -161,3 +161,5 @@ cython_debug/
 .pdm-python
 therapist_turbo.md
 therapist.md
+
+.streamlit/
