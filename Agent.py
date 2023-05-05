@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Agent:
-    def __init__(self, config_path: str = ""):
+    def __init__(self, config_path: str = "", api_key: str=""):
         # System prompts
         self.system: str = ""
         self.instructions: str = ""
