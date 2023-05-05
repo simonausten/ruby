@@ -12,7 +12,8 @@
             "justMyCode": true,
             "args": [
                 "run",
-                "${file}"
+                "${file}",
+                "--server.headless=true",
             ]
         },
         {
