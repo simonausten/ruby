@@ -39,3 +39,5 @@ for m in st.session_state.message_history:
     message(m['content'], True if m['role']=='user' else False)
 chat_input = st.text_input("Type here", key='chat_input', on_change=chat_input_process)
 st.button("Restart", on_click=init)
+
+st.write(therapist.knowledge)
