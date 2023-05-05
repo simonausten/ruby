@@ -1,21 +1,19 @@
 # Importing necessary libraries
 from datetime import datetime
-import json
 import os
-from typing import Tuple
-import gradio as gr
 import toml
-from langchain.llms import OpenAI
+import openai
 
 # Setting the environment variable for OpenAI API key
 os.environ["OPENAI_API_KEY"] = "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"
+openai.api_key = "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"
 
-llm = OpenAI()  # type: ignore
+# llm = OpenAI()  # type: ignore
 
 def log(s):
     print(s)
     with open("therapist.md", 'a') as log:
-        log.write("# " + s + "\n")
+        log.write("# " + str(s) + "\n")
 
 log("---\n# NEW SESSION: {}\n".format(datetime.now().strftime("%B %d, %Y %H:%M:%S")))
 
@@ -23,7 +21,6 @@ class Agent:
     def __init__(self, config_path: str = ""):
         # System prompts
         self.core: str = ""
-        self.reflection: str = ""
         self.instructions: str = ""
 
         self.concerned: bool = False
@@ -31,9 +28,7 @@ class Agent:
 
         self.statement: str = ""
         self.knowledge: list = []
-        self.history: list = [
-            ["Therapist", "(You are waiting calmly for your patient. You have never met them before.)"]
-        ]  # noqa: E501
+        self.history: list = []
 
         if config_path:
             self.load_config(config_path)
@@ -43,9 +38,8 @@ class Agent:
         with open(path) as f:
             agent = toml.load(f)
 
-        # Extracting core, reflection and instructions from the agent
+        # Extracting core and instructions from the agent
         self.core = agent["system"]
-        self.reflection = agent["reflection"]
         self.instructions = agent["instructions"]
         self.output = agent["output"]
 
@@ -59,7 +53,7 @@ class Agent:
 
     def format_knowledge(self) -> str:
         return self.templates["knowledge"].format(
-            important="\n".join([f"- {i}" for i in self.knowledge])
+            knowledge="\n".join([f"- {i}" for i in self.knowledge])
         )
 
     def format_history(self) -> str:
@@ -76,7 +70,6 @@ class Agent:
                 self.format_knowledge(),
                 self.format_history(),
                 self.format_statement(),
-                self.reflection,
                 self.instructions,
                 self.output
             ]
@@ -93,7 +86,12 @@ class Agent:
         log(prompt)
 
         """ Call LLM """
-        response = llm(prompt)
+        # response = llm(prompt)
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+            {"role": "system", "content": prompt}]
+        )
         log(response)
 
         """ Comment? """
@@ -101,51 +99,24 @@ class Agent:
 
         """ Process response """
 
-        response = json.loads(response.strip())  # TODO: Error checking
+        # response = json.loads(response)  # TODO: Error checking
 
-        self.knowledge = response["knowledge"]
-        self.history.append(["Child", statement])
-        self.history.append(["Therapist", response["response"]])
+        # self.knowledge = response["knowledge"]
+        # self.history.append(["Child", statement])
+        # self.history.append(["Therapist", response["response"]])
 
-        # 3. If necessary, truncate the history
-        self.history = self.history[-4:]
+        # # 3. If necessary, truncate the history
+        # self.history = self.history[-4:]
 
         return response
 
 
 therapist = Agent(config_path="./agents/therapist.toml")
+message = "Hi"
 
-
-def process(
-     message: str, chat_history: list
-) -> Tuple[str, list, list]:
-    global therapist #TODO: bad smell
-    therapist.think(message)
-
-    return ("", therapist.history, therapist.knowledge)
-
-
-with gr.Blocks(
-    theme=gr.themes.Soft(),
-    css="""
-        #memory {font-size: 10px; font-style: italic;}
-        #warning {background: red; color: white; filter: filter: grayscale(0%) !important;}
-        button[disabled] {filter: grayscale(0%) !important; opacity: 1 !important; }""",
-) as interface:
-    warning = gr.Button(
-        "⚠️⚠️⚠️ CAUTION ⚠️⚠️⚠️", visible=False, interactive=False, elem_id="warning"
-    )
-    memory = gr.Textbox(
-        value="",
-        label="Important Information",
-        interactive=False,
-        elem_id="memory",
-    )
-    chatbot = gr.Chatbot()
-    msg = gr.Textbox()
-    clear = gr.Button("Clear")
-
-    msg.submit(process, [msg, chatbot], [msg, chatbot, memory])
-    clear.click(lambda: None, None, chatbot, queue=False)
-
-interface.launch()
+while True:
+    therapist.load_config('./agents/therapist.toml')
+    message = "Hi"
+    response = therapist.think(message)
+    print(response.choices[0].message.content)
+    message = input("> ")
