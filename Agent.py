@@ -3,8 +3,9 @@ import json
 
 import openai
 import toml
+from dotenv import load_dotenv
 
-openai.api_key = "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"
+load_dotenv()
 
 class Agent:
     def __init__(self, config_path: str = ""):
