@@ -2,13 +2,15 @@ import streamlit as st
 from streamlit_chat import message
 from Agent import Agent
 
+st.set_page_config(page_title="Ruby", page_icon="🦩")
+
 if 'first_run' not in st.session_state:
     st.session_state['first_run'] = True
 
 def init():
     st.cache_data.clear()
     st.session_state['message_history'] = [
-        {"role": "assistant", "content": "Hi"}
+        {"role": "assistant", "content": "Hi, I'm Ruby."}
     ]
     st.session_state.first_run = False
 
@@ -31,12 +33,14 @@ def chat_input_process():
     push_message(content=message)
     st.session_state.chat_input = ""
 
-    therapist.think(message)
+    with st.spinner(''):
+        therapist.think(message)
+
     push_message(role="assistant", content=therapist.latest['response'])
 
 
 for m in st.session_state.message_history:
-    message(m['content'], True if m['role']=='user' else False)
+    message(m['content'], True if m['role']=='user' else False, avatar_style="shapes")
 chat_input = st.text_input("Type here", key='chat_input', on_change=chat_input_process)
 st.button("Restart", on_click=init)
 
