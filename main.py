@@ -18,17 +18,19 @@ if st.session_state.first_run is True:
     init()
     
 
-@st.cache_data
+@st.cache_resource
 def init_therapist():
     return Agent(config_path="./agents/therapist.toml", api_key=st.secrets.OPENAI_API_KEY)
 
 therapist = init_therapist()
+print(id(therapist))
 
 def push_message(role:str = "user", content:str=""): # TODO: Decouple
     st.session_state['message_history'].append({"role":role, "content":content})
 
 def chat_input_process():
 
+    # therapist.load_config('./agents/therapist.toml')
     message = st.session_state.chat_input
     push_message(content=message)
     st.session_state.chat_input = ""
@@ -37,6 +39,7 @@ def chat_input_process():
         therapist.think(message)
 
     push_message(role="assistant", content=therapist.latest['response'])
+
 
 
 for m in st.session_state.message_history:
