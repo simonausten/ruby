@@ -32,7 +32,7 @@ class Agent:
         self.request = agent["request"]
 
         # Extracting templates
-        self.templates["knowledge"] = agent["knowledge"]
+        self.templates["knowledge"] = "" #agent["knowledge"]
 
     def think(self, statement):
         if statement:
