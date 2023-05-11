@@ -28,12 +28,10 @@ class Agent:
             _.strip() for _ in r.split("|")[1:]
         ]
         return {
-            response_key: response.replace("'", "")
-            .replace('"', "")
+            response_key: response.replace('"', "")
             .replace("\n", "")
             .strip(),
-            autobiography_key: autobiography.replace("'", "")
-            .replace('"', "")
+            autobiography_key: autobiography.replace('"', "")
             .replace("\n", "")
             .strip(),
             concern_key: True if "TRUE" in concern.upper() else False,
