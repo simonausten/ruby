@@ -9,6 +9,7 @@ class Agent:
     def __init__(self, config_path, api_key: str = ""):
         self.conversation = []
         self.knowledge = []
+        self.autobiography = "I am a child between 5 and 18 years old. I may be dealing with mental health issues and/or trauma. "
         self.load_config(config_path)
 
     def load_config(self, path):
@@ -23,7 +24,7 @@ class Agent:
         # TODO: Error handling. Lots of error handling.
         r = r.choices[0].message.content.strip()  # type: ignore
         print(colored(r, 'green'))
-        response_key, response, knowledge_key, knowledge, concern_key, concern = [
+        response_key, response, autobiography_key, autobiography, concern_key, concern = [
             _.strip() for _ in r.split("|")[1:]
         ]
         return {
@@ -31,7 +32,10 @@ class Agent:
             .replace('"', "")
             .replace("\n", "")
             .strip(),
-            knowledge_key: [_.replace("- ", "") for _ in knowledge.split("\n")],
+            autobiography_key: autobiography.replace("'", "")
+            .replace('"', "")
+            .replace("\n", "")
+            .strip(),
             concern_key: True if "TRUE" in concern.upper() else False,
         }
 
@@ -42,13 +46,13 @@ class Agent:
         # self.conversation = self.conversation[-6:]
         conversation = "\n".join(self.conversation)
 
-        if self.knowledge:
-            knowledge = "\n".join(f"- {k}" for k in self.knowledge)
-        else:
-            knowledge = ""
+        # if self.knowledge:
+        #     knowledge = "\n".join(f"- {k}" for k in self.knowledge)
+        # else:
+        #     knowledge = ""
 
         prompt = self.prompt_template.format(
-            conversation=conversation, knowledge=knowledge
+            conversation=conversation, autobiography=self.autobiography
         )
 
         # Call
@@ -69,10 +73,11 @@ class Agent:
 
         # Update
         self.conversation.append(f"You: {response['response']}")
-        self.knowledge = [
-            _
-            for _ in response["knowledge"]
-            if len(_) > 2 and not _.lower().startswith("nothing")
-        ]
+        # self.knowledge = [
+        #     _
+        #     for _ in response["knowledge"]
+        #     if len(_) > 2 and not _.lower().startswith("nothing")
+        # ]
+        self.autobiography = response['autobiography']
 
         return response
