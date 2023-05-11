@@ -67,7 +67,7 @@ class Agent:
         _response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo", messages=messages
         )
-        # print(_response.choices[0].message.content.strip()) # type: ignore
+        print(_response.choices[0].message.content.strip()) # type: ignore
         response = json.loads(
             _response.choices[0].message.content.strip()  # type: ignore
         )
