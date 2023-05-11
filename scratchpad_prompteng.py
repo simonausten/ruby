@@ -3,11 +3,7 @@ I am a child between 5 and 18 years old. Your task is to provide a safe, friendl
 
 Here are is the latest from our conversation so far:
 ---
-Me: I like playing chess.
-You: That's great! I'd be happy to talk about chess with you. It's a fascinating game that requires strategy and concentration. Do you play chess often? Are there any specific aspects of the game you'd like to discuss or any questions you have?
-Me: I would like to play chess more, but I play with my mum and I can't play with her at the moment.
-You: I understand. It can be disappointing when we can't engage in activities we enjoy with the people we want to. Is there anything else you'd like to talk about or any other interests you have?
-Me: It's not the same without her.
+Me: I like playing football.
 ---
 
 Here is a list of things you know about me:
@@ -53,4 +49,15 @@ messages = [{"role": "user", "content": prompt}]
 _response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo", messages=messages
 )
-print(colored(_response.choices[0].message.content.strip(), 'green'))  # type: ignore
+
+def parse_response(r):
+    # TODO: Error handling. Lots of error handling.
+    response_key, response, knowledge_key, knowledge, concern_key, concern = [_.strip() for _ in r.split("|")[1:]]
+    return {response_key: response,
+       knowledge_key: [_.replace("- ", "") for _ in knowledge.split("\n")],
+       concern_key: False if concern == 'FALSE' else True}
+
+response = _response.choices[0].message.content.strip() # type: ignore
+print(colored(parse_response(response), 'green'))  # type: ignore
+
+
