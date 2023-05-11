@@ -10,6 +10,7 @@ class Agent:
         self.conversation = []
         self.knowledge = []
         self.autobiography = "I am a child between 5 and 18 years old."
+        self.concern = False
         self.load_config(config_path)
 
     def load_config(self, path):
@@ -77,5 +78,6 @@ class Agent:
         #     if len(_) > 2 and not _.lower().startswith("nothing")
         # ]
         self.autobiography = response['autobiography']
+        self.concern = response['concern']
 
         return response

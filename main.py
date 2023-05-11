@@ -50,5 +50,6 @@ for m in st.session_state.message_history:
     message(m['content'], True if m['role']=='user' else False, avatar_style="shapes")
 chat_input = st.text_input("Type here", key='chat_input', on_change=chat_input_process)
 st.button("Restart", on_click=init)
-
+if therapist.concern:
+    st.error("Child is potentially at risk. Intervention required.")
 st.write(therapist.autobiography)
