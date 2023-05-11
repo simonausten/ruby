@@ -9,7 +9,7 @@ class Agent:
     def __init__(self, config_path, api_key: str = ""):
         self.conversation = []
         self.knowledge = []
-        self.autobiography = "I am a child between 5 and 18 years old. I may be dealing with mental health issues and/or trauma. "
+        self.autobiography = "I am a child between 5 and 18 years old."
         self.load_config(config_path)
 
     def load_config(self, path):
