@@ -34,6 +34,13 @@ class Agent:
         # Extracting templates
         self.templates["knowledge"] = "" #agent["knowledge"]
 
+    def parse_response(r):
+        # TODO: Error handling. Lots of error handling.
+        response_key, response, knowledge_key, knowledge, concern_key, concern = [_.strip() for _ in r.split("|")[1:]]
+        return {response_key: response,
+        knowledge_key: [_.replace("- ", "") for _ in knowledge.split("\n")],
+        concern_key: False if concern == 'FALSE' else True}
+
     def think(self, statement):
         if statement:
             self.messages.append({"role": "user", "content": statement})
