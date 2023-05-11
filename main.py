@@ -1,3 +1,5 @@
+# TODO: Generate comments, tests and error handling
+
 import streamlit as st
 from streamlit_chat import message
 from Agent import Agent
@@ -36,9 +38,11 @@ def chat_input_process():
     st.session_state.chat_input = ""
 
     with st.spinner(''):
-        therapist.think(message)
+        response = therapist.think(message)
 
-    push_message(role="assistant", content=therapist.latest['response'])
+    print(response['response'], therapist.knowledge)
+
+    push_message(role="assistant", content=response['response'])
 
 
 
