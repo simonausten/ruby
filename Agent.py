@@ -7,9 +7,9 @@ import toml
 
 class Agent:
     def __init__(self, config_path, api_key: str = ""):
-        self.conversation = []
+        self.conversation = ["You: Hi, I'm Ruby."]
         self.knowledge = []
-        self.autobiography = "I am a child between 5 and 18 years old."
+        self.autobiography = "I am a British child between 5 and 18 years old."
         self.concern = False
         self.load_config(config_path)
 
@@ -44,6 +44,7 @@ class Agent:
         # TODO: Truncate conversation
         # self.conversation = self.conversation[-6:]
         conversation = "\n".join(self.conversation)
+        print(colored(conversation, 'light_blue'))
 
         # if self.knowledge:
         #     knowledge = "\n".join(f"- {k}" for k in self.knowledge)
