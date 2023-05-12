@@ -163,3 +163,4 @@ therapist_turbo.md
 therapist.md
 
 .streamlit/secrets.toml
+.vscode/settings.json
