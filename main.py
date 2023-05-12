@@ -71,5 +71,7 @@ for m in st.session_state.message_history:
 chat_input = st.text_input("Type here", key="chat_input", on_change=chat_input_process)
 st.button("Restart", on_click=reset)
 if therapist.concern:
-    st.error("Child is potentially at risk. Intervention required.")
-st.write(therapist.autobiography)
+    st.error("Child is potentially at risk. Intervention required.", icon="👩‍⚕️")
+else:
+    st.success("No cause for concern.", icon="👩‍⚕️")
+st.info(f'Child autobiography: "{therapist.autobiography}"', icon="📖")
