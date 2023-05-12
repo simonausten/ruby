@@ -1,5 +1,6 @@
 # Importing necessary libraries
 
+import time
 import openai
 from termcolor import colored
 import toml
@@ -58,15 +59,21 @@ class Agent:
 
         # Call
         # TODO: Catch RateLimitError
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt,
-                }
-            ],
-        )
+        for i in range(3):
+            try:
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": prompt,
+                        }
+                    ],
+                )
+                break
+            except:
+                time.sleep(3)
+
 
         response = self.parse_response(response)
 
