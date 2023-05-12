@@ -25,6 +25,7 @@ class Agent:
         # TODO: Error handling. Lots of error handling.
         r = r.choices[0].message.content.strip()  # type: ignore
         print(colored(r, 'green'))
+        # TODO: Handle ValueError (not enough values to unpack)
         response_key, response, autobiography_key, autobiography, concern_key, concern = [
             _.strip() for _ in r.split("|")[1:]
         ]
