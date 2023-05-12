@@ -20,7 +20,6 @@ if st.session_state.first_run is True:
     init()
     
 
-@st.cache_resource
 def init_therapist():
     return Agent(config_path="./agents/therapist.toml", api_key=st.secrets.OPENAI_API_KEY)
 
