@@ -21,24 +21,66 @@ class Agent:
         self.gambit = agent["gambit"]
         self.prompt_template = agent["prompt_template"]
 
+    def get_default_response(self):
+        (response_key, response) = (
+            "response",
+            "Sorry, I'm having a technical issue. Please can you say that again?",
+        )
+        (autobiography_key, autobiography) = ("autobiography", self.autobiography)
+        (concern_key, concern) = ("concern", self.concern)
+
+        return {
+            response_key: response,
+            autobiography_key: autobiography,
+            concern_key: concern,
+        }
+
+    def sanitise_response(self, r: str) -> dict:
+        ########################################
+        # String Sanitisation
+        ########################################
+
+        # Handle quoted delimiters
+        r = "\n".join([_.strip('"') for _ in r.split("\n")])
+
+        # Handle missing "response"
+        if not r.startswith("|response|"):
+            r = "|response|\n" + r
+
+        ########################################
+        # Array Sanitisation
+        ########################################
+
+        r_split = [_.strip() for _ in r.split("|")[1:]]
+
+        if len(r_split) != 6:
+            r_dict = self.get_default_response()
+        else:
+            (
+                response_key,
+                response,
+                autobiography_key,
+                autobiography,
+                concern_key,
+                concern,
+            ) = r_split
+            r_dict = {
+                response_key: response.replace('"', "").replace("\n", "").strip(),
+                autobiography_key: autobiography.replace('"', "")
+                .replace("\n", "")
+                .strip(),
+                concern_key: True if "TRUE" in concern.upper() else self.concern,
+            }
+
+        return r_dict
+
     def parse_response(self, r):
         # TODO: Error handling. Lots of error handling.
         r = r.choices[0].message.content.strip()  # type: ignore
         print(colored(r, "green"))
-        # TODO: Handle ValueError (not enough values to unpack)
-        (
-            response_key,
-            response,
-            autobiography_key,
-            autobiography,
-            concern_key,
-            concern,
-        ) = [_.strip() for _ in r.split("|")[1:]]
-        return {
-            response_key: response.replace('"', "").replace("\n", "").strip(),
-            autobiography_key: autobiography.replace('"', "").replace("\n", "").strip(),
-            concern_key: True if "TRUE" in concern.upper() else False,
-        }
+
+        r_dict = self.sanitise_response(r)
+        return r_dict
 
     def think(self, history):
         # Prepare
@@ -71,7 +113,8 @@ class Agent:
                     ],
                 )
                 break
-            except:
+            except Exception as api_error:  # openai.APIError as api_error:
+                print(colored(repr(api_error), "yellow"))
                 print(colored("OpenAI API is slow, retrying...", "yellow"))
                 time.sleep(3)
 
